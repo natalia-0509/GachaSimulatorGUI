@@ -1,0 +1,255 @@
+﻿<Window x:Class="GachaSimulatorGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GachaSimulatorGUI"
+        mc:Ignorable="d"
+        Title="Gacha Simulator" Height="640" Width="980"
+        WindowStartupLocation="CenterScreen"
+        Background="#12141D" Foreground="#F1F5F9"
+        FontFamily="Segoe UI"
+        PreviewKeyDown="Window_PreviewKeyDown">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="#1A1D2B"/>
+            <Setter Property="BorderBrush" Value="#2D3348"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Foreground" Value="#F1F5F9"/>
+        </Style>
+        
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="ItemBorder" Background="#222638" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#2C324A"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#3B82F6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+        
+    <Grid>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Border Grid.Row="0" Background="#1A1D2B" BorderBrush="#2D3348" BorderThickness="1" CornerRadius="10" Padding="18,12" Margin="0,0,0,16">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock Text="✦ GACHA SIMULATOR" FontSize="20" FontWeight="Bold" Foreground="#60A5FA" VerticalAlignment="Center"/>
+                        <Border Background="#262B40" CornerRadius="6" Padding="12,6" Margin="20,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Gracz: " Foreground="#94A3B8" FontSize="14"/>
+                                <TextBlock x:Name="PlayerNameText" Text="Student" FontWeight="Bold" FontSize="14" Margin="0,0,16,0"/>
+                                <TextBlock Text="Portfel: " Foreground="#94A3B8" FontSize="14"/>
+                                <TextBlock x:Name="CoinsText" Text="1000 monet" Foreground="#FACC15" FontWeight="Bold" FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="BoxesTabBtn" Content="Pakiety (1)" Background="#334155" IsEnabled="False" Click="BoxesTabBtn_Click" Margin="0,0,10,0"/>
+                        <Button x:Name="InvTabBtn" Content="Ekwipunek(I)" Background="#334155" IsEnabled="True" Click="InvTabBtn_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            
+            <Grid x:Name="BoxesViewGrid" Grid.Row="1" Visibility="Visible">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Lewa kolumna: Lista skrzynek -->
+                <Border Grid.Column="0" Background="#1A1D2B" BorderBrush="#2D3348" BorderThickness="1" CornerRadius="10" Padding="14">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="Dostępne kategorie" FontSize="16" FontWeight="Bold" Foreground="#93C5FD" Margin="4,0,0,10"/>
+                        <ListBox x:Name="BoxesListBox" SelectionChanged="BoxesListBox_SelectionChanged" HorizontalContentAlignment="Stretch" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding CategoryName}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Cost, StringFormat='{}{0} monet'}" FontSize="14" Foreground="#FACC15" FontWeight="Bold"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+                
+                <Border Grid.Column="2" Background="#1A1D2B" BorderBrush="#2D3348" BorderThickness="1" CornerRadius="10" Padding="20">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top">
+                            <TextBlock x:Name="SelectedBoxTitle" Text="Pakiet" FontSize="22" FontWeight="Bold" Foreground="#34D399"/>
+                            <TextBlock x:Name="SelectedBoxCost" Text="Koszt otwarcia: 150 monet" FontSize="15" Foreground="#FACC15" Margin="0,4,0,16"/>
+                            <TextBlock Text="Możliwe postacie do zdobycia:" FontSize="14" Foreground="#94A3B8" Margin="0,0,0,8"/>
+                        </StackPanel>
+
+                        <Button DockPanel.Dock="Bottom" x:Name="OpenBoxBtn" Content="OTWÓRZ PAKIET (ENTER)"
+                                Background="#10B981" FontSize="16" Padding="20,14" Margin="0,16,0,0"
+                                IsEnabled="True" Click="OpenBoxBtn_Click"/>
+
+                        <ListBox x:Name="PossibleItemList" Focusable="False" HorizontalContentAlignment="Stretch" Background="#141722" BorderBrush="#262B40">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding ItemRarity}" FontSize="13" Foreground="#94A3B8"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+            </Grid>
+            
+            <Grid x:Name="InventoryViewGrid" Grid.Row="1" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="360"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Border Grid.Column="0" Background="#1A1D2B" BorderBrush="#2D3348" BorderThickness="1" CornerRadius="10" Padding="14" >
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" x:Name="InventoryHeaderCount" Text="Twoja Kolekcja (0)" FontSize="16" FontWeight="Bold" Foreground="#FACC15" Margin="4,0,0,10"/>
+                        <ListBox x:Name="InventoryListBox" SelectionChanged="InventoryListBox_SelectionChanged" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="{Binding MarketValue, StringFormat='{}{0} m'}" FontSize="13" Foreground="#FACC15" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+                
+                <Border x:Name="ItemsStatsCard" Grid.Column="2" Background="#1A1D2B" BorderBrush="#34D399" BorderThickness="2" CornerRadius="10" Padding="24">
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Bottom" Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" x:Name="SellItemBtn" Content="Sprzedaj postać (S)" Background="#D97706" Click="SellItemBtn_Click"/>
+                            <Button Grid.Column="2" x:Name="ResetProfileBtn" Content="Reset profilu (R)" Background="#DC2626" Click="ResetProfileBtn_Click"/>
+                        </Grid>
+                        
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,12,0">
+                            <StackPanel x:Name="StatsContentPanel">
+                                <TextBlock x:Name="ItemRarityText" Text="COMMON" FontSize="13" FontWeight="Bold" Foreground="#94A3B8"/>
+                                <TextBlock x:Name="ItemNameText" Text="Wybierz postać z listy" FontSize="26" FontWeight="Bold" Margin="0,2,0,12"/>
+                                <TextBlock x:Name="ItemDescText" Text="Tutaj pojawią się statystyki oraz historia wybranej postaci." FontStyle="Italic" Foreground="#CBD5E1" TextWrapping="Wrap" FontSize="14" Margin="0,0,0,22"/>
+                                
+                                <TextBlock x:Name="ItemAttackText" Text=" Atak: 0 pkt" FontSize="14" FontWeight="SemiBold" Foreground="#38BDF8" Margin="0,0,0,4"/>
+                                <ProgressBar x:Name="ItemAttackBar" Maximum="160" Value="0" Height="10" Background="#262B40" Foreground="#38BDF8" BorderThickness="0" Margin="0,0,0,14"/>
+
+                                <TextBlock x:Name="ItemDefenseText" Text=" Obrona: 0 pkt" FontSize="14" FontWeight="SemiBold" Foreground="#818CF8" Margin="0,0,0,4"/>
+                                <ProgressBar x:Name="ItemDefenseBar" Maximum="160" Value="0" Height="10" Background="#262B40" Foreground="#818CF8" BorderThickness="0" Margin="0,0,0,14"/>
+
+                                <TextBlock x:Name="ItemHealthText" Text=" Życie: 0 pkt" FontSize="14" FontWeight="SemiBold" Foreground="#34D399" Margin="0,0,0,4"/>
+                                <ProgressBar x:Name="ItemHealthBar" Maximum="200" Value="0" Height="10" Background="#262B40" Foreground="#34D399" BorderThickness="0" Margin="0,0,0,18"/>
+
+                                <Border Background="#222638" CornerRadius="6" Padding="12,8">
+                                    <TextBlock x:Name="ItemValueText" Text="Wartość sprzedaży: 0 monet" FontSize="15" FontWeight="Bold" Foreground="#FACC15"/>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Grid>
+            <TextBlock Grid.Row="2" Text="Sterowanie: Myszka lub Strzałki ↑↓ (wybór)  |  ENTER (otwórz skrzynkę)  |  I (ekwipunek)  |  S (sprzedaj)  |  R (reset)"
+                       Foreground="#64748B" FontSize="12" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+        </Grid>
+        <Grid x:Name="AnimationOverlay" Background="#E60B0D14" Visibility="Collapsed">
+            <Border x:Name="ShakingBoxVisual" Width="440" Height="440" Background="#1E293B" BorderBrush="#3B82F6" BorderThickness="3"
+                    CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <RotateTransform x:Name="BoxRotateTransform" Angle="0"/>
+                </Border.RenderTransform>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="🎁" FontSize="72" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="OpeningBoxLabel" Text="Otwieranie..." FontSize="18" FontWeight="Bold" Foreground="#93C5FD" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                </StackPanel>
+            </Border>
+            
+            <Border x:Name="RewardCardVisual" Width="440" Background="#1A1D2B" BorderBrush="#FACC15" BorderThickness="3"
+                    CornerRadius="16" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Visibility="Collapsed" RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <ScaleTransform x:Name="CardScaleTransform" ScaleX="1" ScaleY="1"/>
+                </Border.RenderTransform>
+                <StackPanel>
+                    <TextBlock Text="ZDOBYTO NOWĄ POSTAĆ!" FontSize="14" FontWeight="Bold" Foreground="#34D399" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="RewardRarityText" Text="★ LEGENDARY ★" FontSize="18" FontWeight="Bold" Foreground="#FACC15" HorizontalAlignment="Center" Margin="0,8,0,4"/>
+                    <TextBlock x:Name="RewardNameText" Text="Serafin Sześcioskrzydły" FontSize="26" FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock x:Name="RewardDescText" Text="Opis postaci..." FontStyle="Italic" Foreground="#CBD5E1" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,18"/>
+
+                    <Border Background="#222638" CornerRadius="8" Padding="12" Margin="0,0,0,20">
+                        <TextBlock x:Name="RewardStatsSummary" Text="Atak: 100  |  Obrona: 80  |  Życie: 150" FontWeight="SemiBold" Foreground="#93C5FD" HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Button Content="KONTYNUUJ (ENTER)" Background="#2563EB" Click="CloseRewardBtn_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
